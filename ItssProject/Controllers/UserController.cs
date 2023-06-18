@@ -1,4 +1,5 @@
 ﻿using ItssProject.Interfaces;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 namespace ItssProject.Controllers
 {
@@ -11,6 +12,7 @@ namespace ItssProject.Controllers
         {
             _dataService = dataService;
         }
+        [EnableCors("AllowOrigin")]
         [HttpPost("login")]
         public IActionResult CheckUserInfor([FromBody] LoginRequestModel Model)
         {
@@ -38,6 +40,7 @@ namespace ItssProject.Controllers
                 throw new Exception();
             }
         }
+        [EnableCors("AllowOrigin")]
         [HttpPost("signup")]
         public IActionResult SignUpAccount([FromBody] SignUpRequestModel Model)
         {

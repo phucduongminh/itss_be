@@ -1,5 +1,6 @@
 ﻿using ItssProject.Interfaces;
 using ItssProject.Models;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,6 +15,7 @@ namespace ItssProject.Controllers
         {
             _dataService = dataService;
         }
+        [EnableCors("AllowOrigin")]
         [HttpGet("getReviewCoffeeShop/{coffeeShopId}")]
         public List<Review> GetReview([FromRoute] int coffeeShopId)
         {
@@ -31,6 +33,7 @@ namespace ItssProject.Controllers
             }
 
         }
+        [EnableCors("AllowOrigin")]
         [HttpPost("addReviewCoffeeShop")]
         public IActionResult AddReview([FromBody] Review review)
         {

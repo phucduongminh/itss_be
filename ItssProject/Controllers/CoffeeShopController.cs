@@ -15,6 +15,7 @@ namespace ItssProject.Controllers
         {
             _dataService = dataService;
         }
+        [EnableCors("AllowOrigin")]
         [HttpPost("SearchCoffeeShop")]
         public List<CoffeeShop> SearchCoffeeShop([FromBody] RequestCoffeeShopModel Model)
         {
@@ -54,6 +55,7 @@ namespace ItssProject.Controllers
                 throw new Exception();
             }
         }
+        [EnableCors("AllowOrigin")]
         [HttpDelete("DeleteCoffeeShop/{coffeeId}")]
         public IActionResult DeleteCoffeeShopById([FromRoute] int coffeeId)
         {
@@ -71,6 +73,7 @@ namespace ItssProject.Controllers
                 throw new Exception();
             }
         }
+        [EnableCors("AllowOrigin")]
         [HttpPost("AddCoffeeShop")]
         public IActionResult AddCoffeeShop([FromBody] CoffeeShop Model)
         {
@@ -88,6 +91,7 @@ namespace ItssProject.Controllers
                 throw new Exception();
             }
         }
+        [EnableCors("AllowOrigin")]
         [HttpPost("SortCoffeeShopSortBy/{pullDown}")]
         public List<CoffeeShop> SortCoffeeShop([FromRoute]string pullDown)
         {
