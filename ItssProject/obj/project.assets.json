@@ -6322,11 +6322,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "G:\\kissaten-branch\\kissaten_be4\\ItssProject\\ItssProject\\ItssProject.csproj",
+      "projectUniqueName": "G:\\kissaten-branch\\kissaten_be7\\ItssProject\\ItssProject\\ItssProject.csproj",
       "projectName": "ItssProject",
-      "projectPath": "G:\\kissaten-branch\\kissaten_be4\\ItssProject\\ItssProject\\ItssProject.csproj",
+      "projectPath": "G:\\kissaten-branch\\kissaten_be7\\ItssProject\\ItssProject\\ItssProject.csproj",
       "packagesPath": "C:\\Users\\84373\\.nuget\\packages\\",
-      "outputPath": "G:\\kissaten-branch\\kissaten_be4\\ItssProject\\ItssProject\\obj\\",
+      "outputPath": "G:\\kissaten-branch\\kissaten_be7\\ItssProject\\ItssProject\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\84373\\AppData\\Roaming\\NuGet\\NuGet.Config",

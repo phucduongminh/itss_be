@@ -12,7 +12,7 @@ namespace ItssProject.Models
         public int CoffeeId { get; set; }
         public double Rating { get; set; }
         public string? Comment { get; set; }
-        public string ReviewAt { get; set; }
-        public string EditAt { get; set; }
+        public string? ReviewAt { get; set; }
+        public string? EditAt { get; set; }
     }
 }
