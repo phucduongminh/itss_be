@@ -2,7 +2,7 @@
 
 namespace ItssProject.Models
 {
-    public class CoffeeShop
+    public class SubCoffeeShop
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
@@ -16,7 +16,7 @@ namespace ItssProject.Models
         public string? CloseHour { get; set; }
         public Boolean Service { get;set; }
         public string? Description { get; set; }
-        public Boolean Status { get; set; }
+        public string? Status { get; set; }
         public int? PostedByUser { get; set; }
         public int? Approved { get; set; }
     }

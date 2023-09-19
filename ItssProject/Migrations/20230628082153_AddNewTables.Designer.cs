@@ -3,6 +3,7 @@ using System;
 using ItssProject.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ItssProject.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20230628082153_AddNewTables")]
+    partial class AddNewTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -123,8 +126,8 @@ namespace ItssProject.Migrations
                     b.Property<bool>("Service")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("Status")
-                        .HasColumnType("boolean");
+                    b.Property<string>("Status")
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -212,58 +215,6 @@ namespace ItssProject.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ReviewReactions");
-                });
-
-            modelBuilder.Entity("ItssProject.Models.SubCoffeeShop", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Address")
-                        .HasColumnType("text");
-
-                    b.Property<int?>("Approved")
-                        .HasColumnType("integer");
-
-                    b.Property<double?>("AverageRating")
-                        .HasColumnType("double precision");
-
-                    b.Property<string>("CloseHour")
-                        .HasColumnType("text");
-
-                    b.Property<int?>("ContactNumber")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Gmail")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ImageCover")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.Property<string>("OpenHour")
-                        .HasColumnType("text");
-
-                    b.Property<int?>("PostedByUser")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("Service")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Status")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("SubCoffeeShops");
                 });
 
             modelBuilder.Entity("ItssProject.Models.User", b =>

@@ -1,8 +1,8 @@
 ﻿using ItssProject.Interfaces;
 using ItssProject.Models;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Cors;
 
 namespace ItssProject.Controllers
 {
@@ -44,6 +44,24 @@ namespace ItssProject.Controllers
                     return null;
                 }
                 return _dataService.GetListCoffeBookMarks(UserId);
+            }
+            catch
+            {
+                throw new Exception();
+            }
+        }
+        [EnableCors("AllowOrigin")]
+        [HttpDelete("DeleteBookMarkById/{UserId}/{CoffeeShopId}")]
+        public IActionResult DeleteBookMarkById([FromRoute] int UserId, [FromRoute] int CoffeeShopId)
+        {
+            try
+            {
+                if (UserId < 1 || CoffeeShopId < 1)
+                {
+                    return BadRequest("Id is not valid");
+                }
+                _dataService.DeleteBookMarkById(UserId, CoffeeShopId);
+                return Ok("Delete Bookmark is sucessfully");
             }
             catch
             {

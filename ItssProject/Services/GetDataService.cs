@@ -5,6 +5,10 @@ using ItssProject.Interfaces;
 using ItssProject.Models;
 using System;
 using static ItssProject.Controllers.UserController;
+using static ItssProject.Controllers.CoffeeShopController;
+using static ItssProject.Controllers.ReviewController;
+using static ItssProject.Controllers.SubCoffeeShopController;
+using System.Globalization;
 
 namespace ItssProject.Services
 {
@@ -85,17 +89,83 @@ namespace ItssProject.Services
                 throw new Exception();
             }
         }
+        public void ApproveCoffeeShopById(int coffeeShopId)
+        {
+            try
+            {
+                var shop = _applicationContext.CoffeeShops.FirstOrDefault(coffeeShop => coffeeShop.Id == coffeeShopId);
+                if (shop == null)
+                {
+                    Console.WriteLine("CoffeeShop does not exist");
+                    return;
+                }
+
+                shop.Approved = 1;
+                _applicationContext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                throw;
+            }
+        }
+
+        public void DeleteSubCoffeeShopById(int coffeeShopId)
+        {
+            try
+            {
+                var Shop = (from subcoffeeShop in _applicationContext.SubCoffeeShops.AsNoTracking()
+                            where (subcoffeeShop.Id == coffeeShopId)
+                            select subcoffeeShop).FirstOrDefault();
+                if (Shop == null)
+                {
+                    Console.WriteLine("CoffeeShop is not exits");
+                }
+                _applicationContext.SubCoffeeShops.Remove(Shop);
+                _applicationContext.SaveChanges();
+            }
+            catch
+            {
+                throw new Exception();
+            }
+        }
+        public void DeleteBookMarkById(int userId, int coffeeShopId)
+        {
+            try
+            {
+                var Bookmark = (from bookMark in _applicationContext.BookMarks.AsNoTracking()
+                              where (bookMark.UserId == userId && bookMark.CoffeeId == coffeeShopId)
+                              select bookMark).FirstOrDefault();
+                if (Bookmark != null)
+                {
+                    //Console.WriteLine("CoffeeShop is not exits");
+                    _applicationContext.BookMarks.Remove(Bookmark);
+                    _applicationContext.SaveChanges();
+                }
+            }
+            catch
+            {
+                throw new Exception();
+            }
+        }
         //public ResponseGetLike GetLikeAndDislikeAtComment()
         //{
 
         //}
-        public List<CoffeeShop> GetCoffeeShopByRequest(string Description, string Name, double Rank, string Address, bool Service)
+        public List<CoffeeShop> GetCoffeeShopByRequest(string Name, string Address, bool Service)
         {
             try
             {
                 var listCoffeeShop = new List<CoffeeShop>();
+
+                //DateTime dateTime1 = DateTime.ParseExact(Hour, "H:mm", null);
+
                 listCoffeeShop = (from shop in _applicationContext.CoffeeShops.AsNoTracking()
-                                  where (shop.Service == Service && shop.Description == Description && shop.Name == Name && shop.AverageRating == Rank && shop.Address == Address)
+                                  where (shop.Service == Service
+                                         //&& DateTime.ParseExact(shop.CloseHour, "H:mm", null) > dateTime1
+                                         //&& shop.OpenHour== Hour
+                                         && shop.Name.ToLower().Contains(Name.ToLower())
+                                         && shop.Address.ToLower().Contains(Address.ToLower()))
                                   select new CoffeeShop
                                   {
                                       Id = shop.Id,
@@ -107,12 +177,13 @@ namespace ItssProject.Services
                                       AverageRating = shop.AverageRating,
                                       OpenHour = shop.OpenHour,
                                       CloseHour = shop.CloseHour,
+                                      Service = shop.Service,
                                       Description = shop.Description,
                                       Status = shop.Status,
                                       PostedByUser = shop.PostedByUser,
                                       Approved = shop.Approved
-                                  }
-                                  ).ToList();
+                                  }).ToList();
+
                 return listCoffeeShop;
             }
             catch
@@ -120,6 +191,7 @@ namespace ItssProject.Services
                 throw new Exception();
             }
         }
+
         public CoffeeShop GetCoffeeShopById(int coffeeId)
         {
             try
@@ -137,6 +209,7 @@ namespace ItssProject.Services
                                       AverageRating = shop.AverageRating,
                                       OpenHour = shop.OpenHour,
                                       CloseHour = shop.CloseHour,
+                                      Service = shop.Service,
                                       Description = shop.Description,
                                       Status = shop.Status,
                                       PostedByUser = shop.PostedByUser,
@@ -150,11 +223,73 @@ namespace ItssProject.Services
                 throw new Exception();
             }
         }
-        public void AddInformationOfCoffeeShop(CoffeeShop Model)
+
+        public void EditShopInformation(CoffeeShop updatedCoffeeShop)
         {
             try
             {
-                _applicationContext.CoffeeShops.Add(Model);
+                // Lấy thông tin cửa hàng cà phê dựa trên coffeeId
+                var coffeeShop = _applicationContext.CoffeeShops.FirstOrDefault(shop => shop.Id == updatedCoffeeShop.Id);
+                if (coffeeShop == null)
+                {
+                    throw new ArgumentException("Invalid coffee shop ID");
+                }
+
+                // Cập nhật thông tin mới chỉ khi các trường không phải là null
+                if (updatedCoffeeShop.Name != null)
+                {
+                    coffeeShop.Name = updatedCoffeeShop.Name;
+                }
+                if (updatedCoffeeShop.Address != null)
+                {
+                    coffeeShop.Address = updatedCoffeeShop.Address;
+                }
+                if (updatedCoffeeShop.Gmail != null)
+                {
+                    coffeeShop.Gmail = updatedCoffeeShop.Gmail;
+                }
+                if (updatedCoffeeShop.Approved != null)
+                {
+                    coffeeShop.Approved = updatedCoffeeShop.Approved;
+                }
+                if (updatedCoffeeShop.Status != null)
+                {
+                    coffeeShop.Status = updatedCoffeeShop.Status;
+                }
+                if (updatedCoffeeShop.AverageRating != null)
+                {
+                    coffeeShop.AverageRating = updatedCoffeeShop.AverageRating;
+                }
+                if (updatedCoffeeShop.CloseHour != null)
+                {
+                    coffeeShop.CloseHour = updatedCoffeeShop.CloseHour;
+                }
+                if (updatedCoffeeShop.OpenHour != null)
+                {
+                    coffeeShop.OpenHour = updatedCoffeeShop.OpenHour;
+                }
+                if (updatedCoffeeShop.Service != null)
+                {
+                    coffeeShop.Service = updatedCoffeeShop.Service;
+                }
+                if (updatedCoffeeShop.ContactNumber != null)
+                {
+                    coffeeShop.ContactNumber = updatedCoffeeShop.ContactNumber;
+                }
+                if (updatedCoffeeShop.Description != null)
+                {
+                    coffeeShop.Description = updatedCoffeeShop.Description;
+                }
+                if (updatedCoffeeShop.ImageCover != null)
+                {
+                    coffeeShop.ImageCover = updatedCoffeeShop.ImageCover;
+                }
+                if (updatedCoffeeShop.PostedByUser != null)
+                {
+                    coffeeShop.PostedByUser = updatedCoffeeShop.PostedByUser;
+                }
+
+                // Lưu thay đổi vào cơ sở dữ liệu
                 _applicationContext.SaveChanges();
             }
             catch
@@ -162,6 +297,69 @@ namespace ItssProject.Services
                 throw new Exception();
             }
         }
+
+        public void AddInformationOfCoffeeShop(RequestAddCoffeeShopModel Model)
+        {
+            try
+            {
+                if (Model.Name == null || Model.Address == null)
+                {
+                    throw new ArgumentException("Invalid field");
+                }
+                var newCoffeeShop = new CoffeeShop();
+                newCoffeeShop.Name = Model.Name;
+                newCoffeeShop.Address = Model.Address;
+                newCoffeeShop.Gmail = Model.Gmail;
+                newCoffeeShop.Approved = Model.Approved;
+                newCoffeeShop.Status = Model.Status;
+                newCoffeeShop.AverageRating = Model.AverageRating;
+                newCoffeeShop.CloseHour = Model.CloseHour;
+                newCoffeeShop.OpenHour = Model.OpenHour;
+                newCoffeeShop.Service = Model.Service;
+                newCoffeeShop.ContactNumber = Model.ContactNumber;
+                newCoffeeShop.Description = Model.Description;
+                newCoffeeShop.ImageCover = Model.ImageCover;
+                newCoffeeShop.PostedByUser = Model.PostedByUser;
+                _applicationContext.CoffeeShops.Add(newCoffeeShop);
+                _applicationContext.SaveChanges();
+            }
+            catch
+            {
+                throw new Exception();
+            }
+        }
+
+        public void AddInformationOfSubCoffeeShop(RequestAddSubCoffeeShopModel Model)
+        {
+            try
+            {
+                if (Model.Name == null || Model.Address == null)
+                {
+                    throw new ArgumentException("Invalid field");
+                }
+                var newCoffeeShop = new SubCoffeeShop();
+                newCoffeeShop.Name = Model.Name;
+                newCoffeeShop.Address = Model.Address;
+                newCoffeeShop.Gmail = Model.Gmail;
+                newCoffeeShop.Approved = Model.Approved;
+                newCoffeeShop.Status = Model.Status;
+                newCoffeeShop.AverageRating = Model.AverageRating;
+                newCoffeeShop.CloseHour = Model.CloseHour;
+                newCoffeeShop.OpenHour = Model.OpenHour;
+                newCoffeeShop.Service = Model.Service;
+                newCoffeeShop.ContactNumber = Model.ContactNumber;
+                newCoffeeShop.Description = Model.Description;
+                newCoffeeShop.ImageCover = Model.ImageCover;
+                newCoffeeShop.PostedByUser = Model.PostedByUser;
+                _applicationContext.SubCoffeeShops.Add(newCoffeeShop);
+                _applicationContext.SaveChanges();
+            }
+            catch
+            {
+                throw new Exception();
+            }
+        }
+
         private List<CoffeeShop> GetCoffeeShop()
         {
             try
@@ -195,6 +393,39 @@ namespace ItssProject.Services
                                            AverageRating = shop.AverageRating,
                                            OpenHour = shop.OpenHour,
                                            CloseHour = shop.CloseHour,
+                                           Service = shop.Service,
+                                           Description = shop.Description,
+                                           Status = shop.Status,
+                                           PostedByUser = shop.PostedByUser,
+                                           Approved = shop.Approved
+                                       }
+                                     ).ToList();
+
+
+                return listCoffeeShops;
+            }
+            catch
+            {
+                throw new Exception();
+            }
+        }
+        private List<SubCoffeeShop> GetSubCoffeeShop()
+        {
+            try
+            {
+                var listCoffeeShops = (from shop in _applicationContext.SubCoffeeShops.AsNoTracking()
+                                       select new SubCoffeeShop
+                                       {
+                                           Id = shop.Id,
+                                           Name = shop.Name,
+                                           Address = shop.Address,
+                                           Gmail = shop.Gmail,
+                                           ContactNumber = shop.ContactNumber,
+                                           ImageCover = shop.ImageCover,
+                                           AverageRating = shop.AverageRating,
+                                           OpenHour = shop.OpenHour,
+                                           CloseHour = shop.CloseHour,
+                                           Service = shop.Service,
                                            Description = shop.Description,
                                            Status = shop.Status,
                                            PostedByUser = shop.PostedByUser,
@@ -215,11 +446,14 @@ namespace ItssProject.Services
             try
             {
                 var listCoffeeShops = new List<CoffeeShop>();
-                if (pullDown == null)
+                if (pullDown == "All")
                 {
-                    return GetCoffeeShop();
+                    listCoffeeShops = GetCoffeeShop();
+                    IQueryable<CoffeeShop> queryableCoffeeShops = listCoffeeShops.AsQueryable();
+                    queryableCoffeeShops = queryableCoffeeShops.OrderBy(i => i.Id);
+                    return queryableCoffeeShops.ToList();
                 }
-                if (pullDown == "Number of comment (count)")
+                if (pullDown == "Number of comment")
                 {
                     var listCoffeeIdWithManyComments = GetIdCoffeeShopHadMostComment();
                     foreach (int i in listCoffeeIdWithManyComments)
@@ -233,15 +467,15 @@ namespace ItssProject.Services
                 {
                     listCoffeeShops = GetCoffeeShop();
                     IQueryable<CoffeeShop> queryableCoffeeShops = listCoffeeShops.AsQueryable();
-                    queryableCoffeeShops.OrderByDescending(i => i.AverageRating);
-                    return listCoffeeShops;
+                    queryableCoffeeShops = queryableCoffeeShops.OrderByDescending(i => i.AverageRating);
+                    return queryableCoffeeShops.ToList();
                 }
-                if (pullDown == "Address")
+                if (pullDown == "RatingDown")
                 {
                     listCoffeeShops = GetCoffeeShop();
                     IQueryable<CoffeeShop> queryableCoffeeShops = listCoffeeShops.AsQueryable();
-                    queryableCoffeeShops.OrderByDescending(i => i.Address);
-                    return listCoffeeShops;
+                    queryableCoffeeShops = queryableCoffeeShops.OrderBy(i => i.AverageRating);
+                    return queryableCoffeeShops.ToList();
                 }
                 else
                 {
@@ -253,6 +487,31 @@ namespace ItssProject.Services
                 throw new Exception();
             }
         }
+
+        public List<SubCoffeeShop> GetSubCoffeeShopSort(string pullDown)
+        {
+            try
+            {
+                var listCoffeeShops = new List<SubCoffeeShop>();
+                if (pullDown == "All")
+                {
+                    listCoffeeShops = GetSubCoffeeShop();
+                    IQueryable<SubCoffeeShop> queryableCoffeeShops = listCoffeeShops.AsQueryable();
+                    queryableCoffeeShops = queryableCoffeeShops.OrderBy(i => i.Id);
+                    return queryableCoffeeShops.ToList();
+                }
+                
+                else
+                {
+                    return null;
+                }
+            }
+            catch
+            {
+                throw new Exception();
+            }
+        }
+
         private List<int> GetIdCoffeeShopHadMostComment()
         {
             try
@@ -308,12 +567,16 @@ namespace ItssProject.Services
                               select bookMark.Id);
                 if (UserId != null)
                 {
-                    var listCoffeeShopIdOfBookMarks = _applicationContext.Set<BookMark>().Where(a => a.UserId == userId).Select(a => a.CoffeeId).ToList();
+                    var listCoffeeShopIdOfBookMarks = _applicationContext.Set<BookMark>().Where(a => a.UserId == userId).Select(a => a.CoffeeId).Distinct().ToList();
                     List<CoffeeShop> listCoffeeShop = new List<CoffeeShop>();
                     foreach (var item in listCoffeeShopIdOfBookMarks)
                     {
-                        var coffeeShop = _applicationContext.Set<CoffeeShop>().Where(a => a.Id == item).Select(a => a);
-                        listCoffeeShop.Add((CoffeeShop)coffeeShop);
+                        var coffeeShop = (from CoffeeShop in _applicationContext.CoffeeShops.AsNoTracking()
+                                          where(CoffeeShop.Id == item)
+                                          select CoffeeShop).FirstOrDefault();
+                        //var coffeeShop = _applicationContext.Set<CoffeeShop>().Where(a => a.Id == item).Select(a => a);
+                        //listCoffeeShop.Add((CoffeeShop)coffeeShop);
+                        listCoffeeShop.Add(coffeeShop);
                     }
                     return listCoffeeShop;
                 }
@@ -325,6 +588,7 @@ namespace ItssProject.Services
             catch
             {
                 throw new Exception();
+
             }
         }
         public List<Review> GetReview(int coffeeShopId)
@@ -337,7 +601,7 @@ namespace ItssProject.Services
                 if (CoffeeShopId != null)
                 {
                     var listReview = (from review in _applicationContext.Reviews.AsNoTracking()
-                                      where (review.Id == coffeeShopId)
+                                      where (review.CoffeeId == coffeeShopId)
                                       select new Review
                                       {
                                           Id = review.Id,
@@ -360,18 +624,50 @@ namespace ItssProject.Services
                 throw new Exception();
             }
         }
-        public void AddReview(Review review)
+        public void AddReview(RequestAddReviewModel Model)
         {
             try
             {
-                var userId = review.UserId;
-
-
-                if (review != null)
+                if (Model != null)
                 {
+                    var review = new Review();
+                    review.UserId = Model.UserId;
+                    review.CoffeeId = Model.CoffeeId;
+                    review.Rating = Model.Rating;
+                    review.Comment = Model.Comment;
+                    review.ReviewAt = Model.ReviewAt;
+                    review.EditAt = Model.EditAt;
                     _applicationContext.Reviews.Add(review);
                     _applicationContext.SaveChanges();
                 }
+            }
+            catch
+            {
+                throw new Exception();
+            }
+        }
+        public int GetUserIdByUserName(string userName)
+        {
+            try
+            {
+                var userId = (from User in _applicationContext.Users
+                              where (User.Name == userName)
+                              select User.Id).FirstOrDefault();
+                return userId;
+            }
+            catch
+            {
+                throw new Exception();
+            }
+        }
+        public string GetUserNameByUserId(int userId)
+        {
+            try
+            {
+                var userName = (from User in _applicationContext.Users
+                              where (User.Id == userId)
+                              select User.Name).FirstOrDefault();
+                return userName;
             }
             catch
             {

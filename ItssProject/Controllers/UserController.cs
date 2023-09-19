@@ -1,6 +1,7 @@
 ﻿using ItssProject.Interfaces;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Cors;
+
 namespace ItssProject.Controllers
 {
     [Route("api/[controller]")]
@@ -57,15 +58,57 @@ namespace ItssProject.Controllers
                     return BadRequest("Password is not enough to characters");
                 }
                 var result = _dataService.CheckUserInformation(userName, password);
-                if (result == false)
+                if (result == true)
                 {
-                    return BadRequest("Information of user is wrong");
+                    return BadRequest("Information of user is exits");
                 }
                 else
                 {
                     _dataService.AddUser(Model);
                     return Ok("SignUp is successfully");
                 }        
+            }
+            catch
+            {
+                throw new Exception();
+            }
+        }
+        [EnableCors("AllowOrigin")]
+        [HttpGet("{UserName}/getUserIdByUserName")]
+        public int GetUserId([FromRoute] string UserName)
+        {
+            try
+            {
+                var userName = UserName;
+                if(userName == null)
+                {
+                    return 0;
+                }    
+                else
+                {
+                    return _dataService.GetUserIdByUserName(userName);
+                }    
+            }
+            catch
+            {
+                throw new Exception();
+            }
+        }
+        [EnableCors("AllowOrigin")]
+        [HttpGet("{UserId}/getUserNameByUserId")]
+        public string GetUserName([FromRoute] int UserId)
+        {
+            try
+            {
+                var userId = UserId;
+                if (userId != null)
+                {
+                    return _dataService.GetUserNameByUserId(userId);
+                }
+                else
+                {
+                    return "Not found";
+                }
             }
             catch
             {
@@ -81,7 +124,7 @@ namespace ItssProject.Controllers
         {
             public string UserName { get; set; }
             public string Password { get; set; }
-            public string Gmail { get; set; }
+            public string? Gmail { get; set; }
         }
     }
 }

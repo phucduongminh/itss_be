@@ -1,8 +1,8 @@
 ﻿using ItssProject.Interfaces;
 using ItssProject.Models;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Cors;
 
 namespace ItssProject.Controllers
 {
@@ -35,21 +35,30 @@ namespace ItssProject.Controllers
         }
         [EnableCors("AllowOrigin")]
         [HttpPost("addReviewCoffeeShop")]
-        public IActionResult AddReview([FromBody] Review review)
+        public IActionResult AddReviewInfor([FromBody] RequestAddReviewModel Model)
         {
-            if(review == null)
+            if(Model == null)
             {
                 return BadRequest("Review is null");
             }
             try
             {
-                _dataService.AddReview(review);
+                _dataService.AddReview(Model);
                 return Ok("Add review is successfully");
             }
-            catch (Exception ex)
+            catch
             {
-                throw ex;
+                throw new Exception();
             }
+        }
+        public class RequestAddReviewModel
+        {
+            public int UserId { get; set; }
+            public int CoffeeId { get; set; }
+            public double Rating { get; set; }
+            public string? Comment { get; set; }
+            public string? ReviewAt { get; set; }
+            public string? EditAt { get; set; }
         }
     }
 

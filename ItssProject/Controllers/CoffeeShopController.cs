@@ -1,8 +1,8 @@
 ﻿using ItssProject.Interfaces;
 using ItssProject.Models;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Cors;
 
 namespace ItssProject.Controllers
 {
@@ -19,9 +19,7 @@ namespace ItssProject.Controllers
         [HttpPost("SearchCoffeeShop")]
         public List<CoffeeShop> SearchCoffeeShop([FromBody] RequestCoffeeShopModel Model)
         {
-            var Description = Model.Description;
             var Name = Model.Name;
-            var Rank = Model.Rank;
             var Address = Model.Address;
             var Service = Model.Service;
             try
@@ -30,7 +28,7 @@ namespace ItssProject.Controllers
                 {
                     return null;
                 }
-                var result = _dataService.GetCoffeeShopByRequest(Description, Name, Rank, Address, Service);
+                var result = _dataService.GetCoffeeShopByRequest(Name, Address, Service);
                 return result;
             }
             catch
@@ -75,7 +73,7 @@ namespace ItssProject.Controllers
         }
         [EnableCors("AllowOrigin")]
         [HttpPost("AddCoffeeShop")]
-        public IActionResult AddCoffeeShop([FromBody] CoffeeShop Model)
+        public IActionResult AddCoffeeShop([FromBody] RequestAddCoffeeShopModel Model)
         {
             try
             {
@@ -93,12 +91,48 @@ namespace ItssProject.Controllers
         }
         [EnableCors("AllowOrigin")]
         [HttpPost("SortCoffeeShopSortBy/{pullDown}")]
-        public List<CoffeeShop> SortCoffeeShop([FromRoute]string pullDown)
+        public List<CoffeeShop> SortCoffeeShop([FromRoute] string pullDown)
         {
             try
             {
 
-               return _dataService.GetCoffeeShopSort(pullDown);
+                return _dataService.GetCoffeeShopSort(pullDown);
+            }
+            catch
+            {
+                throw new Exception();
+            }
+        }
+        [EnableCors("AllowOrigin")]
+        [HttpPost("EditCoffeeShop")]
+        public IActionResult EditCoffeeShop([FromBody] CoffeeShop Model)
+        {
+            try
+            {
+                if (Model == null)
+                {
+                    return BadRequest("Please Please fill the shop information");
+                }
+                _dataService.EditShopInformation(Model);
+                return Ok("Information of coffee shop edited sucessfully");
+            }
+            catch
+            {
+                throw new Exception();
+            }
+        }
+        [EnableCors("AllowOrigin")]
+        [HttpPost("Approve/{coffeeId}")]
+        public IActionResult ApproveCoffeeShopById([FromRoute] int coffeeId)
+        {
+            try
+            {
+                if (coffeeId <= 0)
+                {
+                    return BadRequest("CoffeeId is valid");
+                }
+                _dataService.ApproveCoffeeShopById(coffeeId);
+                return Ok("Approve CoffeeShop is sucessfully");
             }
             catch
             {
@@ -107,11 +141,25 @@ namespace ItssProject.Controllers
         }
         public class RequestCoffeeShopModel
         {
-            public string? Description { get; set; }
             public string? Name { get; set; }
-            public double Rank { get; set; }
             public string? Address { get; set; }
             public Boolean Service { get; set; }
         }
+        public class RequestAddCoffeeShopModel
+        {
+            public string? Name { get; set; }
+            public string? Address { get; set; }
+            public string? Gmail { get; set; }
+            public int? ContactNumber { get; set; }
+            public string? ImageCover { get; set; }
+            public double? AverageRating { get; set; }
+            public string OpenHour { get; set; }
+            public string CloseHour { get; set; }
+            public Boolean Service { get; set; }
+            public string? Description { get; set; }
+            public Boolean Status { get; set; }
+            public int? PostedByUser { get; set; }
+            public int? Approved { get; set; }
+        }    
     }
 }
